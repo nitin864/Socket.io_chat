@@ -18,5 +18,5 @@ This is a basic real-time chat app using:
    ```bash
    npm install
 2. Starting the Project:
-
-    npn run dev
+   ```bash
+   npm run dev
