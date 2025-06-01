@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chat App</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .chat-container {
+      width: 90%;
+      max-width: 480px;
+      background-color: white;
+      border-radius: 20px;
+      box-shadow: 0 15px 25px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-header {
+      background-color: #4A90E2;
+      color: white;
+      padding: 1rem;
+      font-size: 1.5rem;
+      text-align: center;
+    }
+
+    #messageBox {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+      height: 300px;
+      border-top: 1px solid #eee;
+      border-bottom: 1px solid #eee;
+    }
+
+    #messageBox p {
+      background-color: #e1f5fe;
+      margin: 0.5rem 0;
+      padding: 0.6rem;
+      border-radius: 8px;
+    }
+
+    .input-area {
+      display: flex;
+      padding: 1rem;
+      gap: 0.5rem;
+      background-color: #fafafa;
+    }
+
+    #msgInput {
+      flex: 1;
+      padding: 0.7rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      outline: none;
+    }
+
+    #sendBtn {
+      padding: 0.7rem 1rem;
+      background-color: #4A90E2;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s ease-in-out;
+    }
+
+    #sendBtn:hover {
+      background-color: #357ABD;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-header">Chat App</div>
+    <div id="messageBox"></div>
+    <div class="input-area">
+      <input id="msgInput" placeholder="Enter a message..." type="text" />
+      <button id="sendBtn">Send</button>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const sendBtn = document.getElementById("sendBtn");
+    const msgInput = document.getElementById("msgInput");
+    const messageBox = document.getElementById("messageBox");
+
+    sendBtn.addEventListener("click", () => {
+      const msg = msgInput.value.trim();
+      if (msg) {
+        socket.emit("msgFromFrontend", msg);
+        msgInput.value = "";
+      }
+    });
+
+    msgInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        sendBtn.click();
+      }
+    });
+
+    socket.on("msgFromBackend", (msg) => {
+      const p = document.createElement("p");
+      p.textContent = msg;
+      messageBox.appendChild(p);
+      messageBox.scrollTop = messageBox.scrollHeight; // Auto-scroll
+    });
+  </script>
+</body>
+</html>
